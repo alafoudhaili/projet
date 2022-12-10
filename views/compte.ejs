@@ -1,0 +1,19 @@
+<%-include('./partials/header')%>
+
+<%-include('./partials/navbar',  {authenticated, active: 2})%>
+
+<% if(compte) {%>
+
+    <div class="compte">
+        <h3>Votre Rendez-Vouz</h3>
+        <div>
+            <p>Nom d'utilisateur: <%= compte.username %></p>
+            <p>Email: <%= compte.email %></p>
+            <p>Date: <%= date %></p>
+            <p><%= compte.status ? 'Accepted' : 'En-attend'  %></p>
+        </div>
+    </div>
+
+<% } %>
+
+<%-include('./partials/footer')%>

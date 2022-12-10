@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <link rel="stylesheet" href="views/forme.css">
-    
-</head>
-<body>
-   
+<%-include('./partials/header')%>
 
-    <form action="/inscription" method="post">
+<%-include('./partials/navbar',  {authenticated, active: 1})%>
+<div class="container">
+    <form action="/auth/inscription" method="post">
         <h2>Inscription</h2>
         <div class="input-field">
-            <input type="text" name="nom" id="username" placeholder="Entrer login">
+            <input type="text" name="username" id="username" placeholder="Entrer votre nom d'utilisateur">
         </div>
         <div class="input-field">
             <input type="email" name="email" id="email" placeholder="Entrer votre email">
@@ -23,5 +18,5 @@
         </div>
         <input type="submit" value="Valider">
     </form>
-</body>
-</html>
+</div>
+<%-include('./partials/footer')%>

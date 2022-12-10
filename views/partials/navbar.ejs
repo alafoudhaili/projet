@@ -1,0 +1,9 @@
+<ul class="topnav">
+  <% if(authenticated) { %>
+    <li><a  <%= active===2 ?  'class=active' : "null" %> id="compte" href="/public/compte">Compte</a></li>
+    <li class=right><a href=/auth/logout>Logout</a></li>
+    <% } else { %>
+      <li><a  <%= active===1 ?  'class=active' : "null" %> id="inscription" href="/public/inscription">Inscription</a></li>
+      <li><a <%= active===3 ?  'class=active' : "null" %> <a id="login" href="/public/login">Login</a></li>
+  <% } %>
+</ul>
