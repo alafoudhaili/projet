@@ -42,6 +42,22 @@ router.get("/download/pdf", Authenticate, async (req, res) => {
     }, 1000)
   });
 });
+var QRCode = require('qrcode')
+
+
+router.get("/download/qr", Authenticate, async(req, res) => {
+    const currentUser = await User.findById(req.session.user._id);
+    QRCode.toDataURL(JSON.stringify(currentUser), function (err, url) {
+        let regex = /^data:.+\/(.+);base64,(.*)$/;
+        let data = url.match(regex)[2];
+        let buffer = Buffer.from(data, 'base64');
+        fs.writeFileSync(`${__dirname}/../tmp/qr-${currentUser._id}.png`, buffer);
+        setTimeout(()=>{
+            res.download(`${__dirname}/../tmp/qr-${currentUser._id}.png`);
+        }, 2000)
+      })
+})
+
 
 router.get("/inscription", (req, res) => {
   res.render("inscription", { authenticated: !!req.session.authenticated });
