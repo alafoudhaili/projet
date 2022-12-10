@@ -1,26 +1,50 @@
-const Authenticate = require('../middleware/authMiddleware');
-const User = require('../models/user');
+const Authenticate = require("../middleware/authMiddleware");
+const User = require("../models/user");
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
 
-const router = require('express').Router();
+const router = require("express").Router();
 
-router.get('/login',(req,res) => {
-    res.render('login', {authenticated: !!req.session.authenticated});
+async function generateAccuntPDF(account) {
+  let pdfDoc = new PDFDocument();
+  pdfDoc.pipe(
+    fs.createWriteStream(`${__dirname}/../tmp/output-${account._id}.pdf`)
+  );
+  let acceptedDate = new Date(account.updatedAt).toDateString();
+  pdfDoc.text(`Votre invitation est accepter ${acceptedDate}`);
+  pdfDoc.text(`Num Invitation # ${account._id}`);
+  pdfDoc.text(`Nom: ${account.username}`);
+  let rendezVouz = new Date(account.date).toDateString();
+  pdfDoc.text(`Rendez-vouz: ${rendezVouz}`);
+  pdfDoc.end();
+}
+
+router.get("/login", (req, res) => {
+  res.render("login", { authenticated: !!req.session.authenticated });
 });
 
-router.get('/compte', Authenticate, async (req,res) => {
-    const currentUser = await User.findById(req.session.user._id);
-    const d = new Date(currentUser.date)
-    const dateStr = d.toDateString()
-    res.render('compte', {authenticated: !!req.session.authenticated, compte: currentUser, date: dateStr});
+router.get("/compte", Authenticate, async (req, res) => {
+  const currentUser = await User.findById(req.session.user._id);
+  const d = new Date(currentUser.date);
+  const dateStr = d.toDateString();
+  res.render("compte", {
+    authenticated: !!req.session.authenticated,
+    compte: currentUser,
+    date: dateStr,
+  });
 });
 
-
-router.get('/inscription',(req,res) => {
-    res.render('inscription', {authenticated: !!req.session.authenticated});
-
+router.get("/download/pdf", Authenticate, async (req, res) => {
+  const currentUser = await User.findById(req.session.user._id);
+  await generateAccuntPDF(currentUser).then(() => {
+    setTimeout(()=>{
+        res.download(`${__dirname}/../tmp/output-${currentUser._id}.pdf`);
+    }, 1000)
+  });
 });
 
-
-
+router.get("/inscription", (req, res) => {
+  res.render("inscription", { authenticated: !!req.session.authenticated });
+});
 
 module.exports = router;
